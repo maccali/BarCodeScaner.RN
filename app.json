@@ -1,0 +1,12 @@
+{
+  "name": "scanBar2",
+  "displayName": "scanBar2",
+  "expo": {
+    "name": "scanBar2",
+    "slug": "scanBar2",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
