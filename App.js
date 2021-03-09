@@ -1,21 +1,83 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from "react";
+import { StyleSheet, View, Alert } from "react-native";
+import { RNCamera } from "react-native-camera";
+import { useCamera } from "react-native-camera-hooks";
 
-export default function App() {
+function App({ initialProps }) {
+  const [barcodesSt, setBarcodesSt] = useState([]);
+  const [alertAtention, setAlertAtention] = useState(false);
+  const [dataCodeBar, setDataCodeBar] = useState("");
+
+  const [{ cameraRef }] = useCamera(initialProps);
+
+  const createAlert = (itemCode) =>
+    Alert.alert(
+      "Código Lido!",
+      itemCode,
+      [{ text: "OK", onPress: () => reset() }],
+      { cancelable: false }
+    );
+
+  const reset = () => {
+    setAlertAtention(false);
+    setDataCodeBar("");
+    setBarcodesSt([]);
+  };
+
+  const barcodeRecognized = ({ barcodes }) => {
+    if (!alertAtention) {
+      barcodes.forEach((barcode) => {
+        if (barcode.type) {
+          if (barcode.type !== "UNKNOWN_FORMAT") {
+            console.log("BARCODE -> data", barcode.data);
+
+            setBarcodesSt([...barcodesSt, barcode]);
+          }
+
+          let barCodeObjectsLenght = barcodesSt.length;
+
+          if (barCodeObjectsLenght >= 3) {
+            const codeBarNumber = barcodesSt[0].data;
+
+            const barCodesFiltered = barcodesSt.filter((barCodeOnject) => {
+              return barCodeOnject.data === codeBarNumber;
+            });
+
+            if (barCodeObjectsLenght === barCodesFiltered.length) {
+              console.log("CONFIRMED =>> ", barCodesFiltered);
+              setAlertAtention(true);
+              createAlert(codeBarNumber);
+            }
+          }
+        }
+      });
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <RNCamera
+      captureAudio={false}
+      ref={cameraRef}
+      style={styles.scanner}
+      onGoogleVisionBarcodesDetected={barcodeRecognized}
+      googleVisionBarcodeMode={
+        RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeMode.ALTERNATE
+      }
+    ></RNCamera>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "column",
+    backgroundColor: "black",
+  },
+  scanner: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
 });
+
+export default App;
