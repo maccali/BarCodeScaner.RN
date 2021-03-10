@@ -93,7 +93,11 @@ function App({ initialProps }) {
       }
     >
       <View>
-        <Text style={styles.toutch}>Toque em um item para Selecionar</Text>
+        {barcodesConfirmed.length > 0 ? (
+          <Text style={styles.toutch}>Toque em um item para Selecionar</Text>
+        ) : (
+          <Text style={styles.toutch}>Aponte para o código de barras</Text>
+        )}
         <FlatList
           data={barcodesConfirmed}
           renderItem={renderItem}
@@ -104,7 +108,7 @@ function App({ initialProps }) {
             <Text style={styles.itemSelectedTitle}>
               O seguinte item está selecionado
             </Text>
-            <View style={styles.selectedView}>
+            <View style={styles.selectedViewItem}>
               <Text style={styles.itemType}>{itemSelected.type}</Text>
               <Text style={styles.itemData}>{itemSelected.data}</Text>
             </View>
@@ -131,9 +135,10 @@ const styles = StyleSheet.create({
   item: {
     flexWrap: "wrap",
     alignItems: "center",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     flexDirection: "row",
     paddingVertical: 10,
+    paddingHorizontal: 20,
     backgroundColor: "#ade45d",
     marginVertical: 7,
     borderRadius: 7,
@@ -141,12 +146,11 @@ const styles = StyleSheet.create({
   },
   itemType: {
     fontWeight: "bold",
-    marginLeft: 20,
+    alignSelf: "center",
   },
   itemData: {
-    marginLeft: 15,
-    marginRight: 20,
     fontSize: 17,
+    alignSelf: "center",
   },
   toutch: {
     backgroundColor: "#ffffff",
@@ -159,8 +163,23 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   selectedView: {
-    fontSize: 16,
     backgroundColor: "#ffffff",
+    fontSize: 16,
+    alignSelf: "center",
+    justifyContent: "center",
+    paddingVertical: 15,
+    borderTopLeftRadius: 7,
+    borderTopRightRadius: 7,
+  },
+  selectedViewItem: {
+    fontSize: 16,
+    alignSelf: "center",
+    justifyContent: "center",
+  },
+  itemSelectedTitle: {
+    fontSize: 17,
+    marginBottom: 5,
+    marginHorizontal: 15,
   },
 });
 
