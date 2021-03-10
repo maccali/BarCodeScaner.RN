@@ -46,23 +46,22 @@ function App({ initialProps }) {
           if (barcode.type !== "UNKNOWN_FORMAT") {
             console.log("BARCODE -> data", barcode.data);
 
-            let controlAdd = true;
+            setBarcodesSt([...barcodesSt, barcode]);
+
+            var contain = false;
             barcodesSt.map((item) => {
-              if (barcode.data === item.data) {
-                item.confimed = true;
-                controlAdd = false;
+              if (item.data === barcode.data) {
+                for (var i = 0; i < barcodesConfirmed.length; i++) {
+                  if (barcodesConfirmed[i].data == barcode.data) {
+                    contain = true;
+                    break;
+                  }
+                }
+                if (!contain) {
+                  setBarcodesConfirmed([...barcodesConfirmed, barcode]);
+                }
               }
             });
-
-            if (controlAdd) {
-              setBarcodesSt([...barcodesSt, barcode]);
-            }
-
-            setBarcodesConfirmed(
-              barcodesSt.filter((item) => {
-                return item.confimed === true;
-              })
-            );
           }
         }
       });
