@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Alert } from "react-native";
+import { StyleSheet, View, Alert, Text } from "react-native";
 import { RNCamera } from "react-native-camera";
 import { useCamera } from "react-native-camera-hooks";
 
@@ -7,13 +7,14 @@ function App({ initialProps }) {
   const [barcodesSt, setBarcodesSt] = useState([]);
   const [alertAtention, setAlertAtention] = useState(false);
   const [dataCodeBar, setDataCodeBar] = useState("");
+  const [typeCodeBar, setTypeDataCodeBar] = useState("");
 
   const [{ cameraRef }] = useCamera(initialProps);
 
-  const createAlert = (itemCode) =>
+  const createAlert = (itemCode, typeCode) =>
     Alert.alert(
       "Código Lido!",
-      itemCode,
+      `O código ${itemCode} do tipo ${typeCode} foi lido`,
       [{ text: "OK", onPress: () => reset() }],
       { cancelable: false }
     );
@@ -21,6 +22,7 @@ function App({ initialProps }) {
   const reset = () => {
     setAlertAtention(false);
     setDataCodeBar("");
+    setTypeDataCodeBar("");
     setBarcodesSt([]);
   };
 
@@ -38,6 +40,7 @@ function App({ initialProps }) {
 
           if (barCodeObjectsLenght >= 3) {
             const codeBarNumber = barcodesSt[0].data;
+            const codeBarType = barcodesSt[0].type;
 
             const barCodesFiltered = barcodesSt.filter((barCodeOnject) => {
               return barCodeOnject.data === codeBarNumber;
@@ -46,7 +49,7 @@ function App({ initialProps }) {
             if (barCodeObjectsLenght === barCodesFiltered.length) {
               console.log("CONFIRMED =>> ", barCodesFiltered);
               setAlertAtention(true);
-              createAlert(codeBarNumber);
+              createAlert(codeBarNumber, codeBarType);
             }
           }
         }
